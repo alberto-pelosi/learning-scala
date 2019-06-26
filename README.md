@@ -10,12 +10,14 @@ Notes about [Scala with Cats](https://underscore.io/books/scala-with-cats/)
   
 * In cats Monoids are Type Classes:
 
-`trait Semigroup[A] {
+`
+trait Semigroup[A] {
 	def combine(x: A, y: A): A
 }
 trait Monoid[A] extends Semigroup[A] {
 	def empty: A
-}`
+}
+`
 
 # Semigroups
 
