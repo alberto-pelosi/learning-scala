@@ -14,7 +14,7 @@ object Show4UsingOps{
   def show[A: Show4UsingOps](a: A) = Show4UsingOps[A].show(a)
 
 
-  //tell compiler to convert class A, having instance of type class classShow4UsingOps, to class Show4Ops
+  //tell compiler to convert class A, having instance of type class Show4UsingOps, to class Show4Ops
   //which have one function show
   implicit class Show4Ops[A: Show4UsingOps](a: A) {
     def show = Show4UsingOps[A].show(a)
