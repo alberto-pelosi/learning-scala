@@ -179,3 +179,13 @@ trait Monad[F[_]] {
   def map[A, B](value: F[A])(func: A => B): F[B] = flatMap(value)(a => pure(func(a)))
 }
 ```
+
+**Eval: Eager vs Lazy vs Memoized**
+
+**Eager computations** happen immediately, **Lazy computations** happen on access, **Memoized computations** are run once on first access, after wich the results are cached.
+
+**val** is **eager**, **def** is **lazy**, **lazy val** is **lazy and memoized**
+
+* Scala val = Cats Now (eager, memoized)
+* Scala def = Cats Always (lazy, not memoized)
+* Scala lazy val = Cats Later (lazy, memoized)
