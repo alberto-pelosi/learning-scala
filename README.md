@@ -45,7 +45,7 @@ To ensure this, they follow this rules:
   ```scala
   fa.map(a => a) == fa
   ```
-  * **Composition**: mapping with two functions f and g is the same as mapping with f and then mappung with g:
+  * **Composition**: mapping with two functions f and g is the same as mapping with f and then mapping with g:
   
   ```scala
   fa.map(g(f(_))) == fa.map(f).map(g)
@@ -91,4 +91,91 @@ val f2 = f andThen f
 import scala.language.higherKinds
 ```
 
+## Controvariant Functors
+A Functor map method append a transformation to a chain.
+
+A *Controvariant Functor* prepend a transformation to a chain, via the *contramap* method.
+
+**F[B] contramap(A => B) F[A]**
+
+An *Invariant Functor* implements a method called *imap* that is equivalent to a combination of a map and a contramap
+
+**F[A] imap(A => B; B => A) F[B]**
+
+If B is a subtype of A, we can always convert a B to an A.
+Equivalently we could say that B is a subtype of A if exists a function A => B.
+**So, a covariant functors capture this, if F is a covariant function, if we have a F[A] and a conversion B => A, we can convert to F[B]**
+
+A **controvariant functor** captures the opposite case. 
+**If F is a controvariant functor, if we have a F[A] and a conversion B => A we can convert to B.**
+
+**Invariant functors** capture the case where **we can convert from F[A] to F[B] via a function A => V and viceversa via a function B => A.**
+
+
+**Summary**
+
+**Functors** represent **sequencing behaviours**.
+
+
+* **Regular covariant Functors**, with their map method, represent the ability
+  to apply func􀦞ons to a value in some context. Successive calls to
+  map apply these func􀦞ons in sequence, each accep􀦞ng the result of its
+  predecessor as a parameter.
+
+* **Contravariant functors**, with their contramap method, represent the
+ ability to “prepend” func􀦞ons to a func􀦞on-like context. Successive
+ calls to contramap sequence these func􀦞ons in the opposite order to
+ map.
+
+* **Invariant functors**, with their imap method, represent bidirec􀦞onal
+  transforma􀦞ons.
   
+  
+In brief, given a function on a category, A => B, a covariant functor maps F[A] => F[B].
+Given a function on a category, B => A, a covariant functor maps F[A] => F[B]
+Given a pair of functions on a category, A => B, B => A, an invariant functor maps F[A] => F[B]
+
+# Monads
+
+A **Monad** is anything with a constructor and a flatMap
+
+In Cats:
+
+```scala
+import scala.language.higherKinds
+trait Monad[F[_]] {
+  def pure[A](value: A): F[A]
+  def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
+}
+```
+
+**Monad Laws**
+
+* **Left identity**: calling pure and transforming the result with funct is the same as calling func:
+
+```scala
+pure(a).flatMap(func) == func(a)
+```
+
+* **Right identity**: passing pure to flatMap is the same as doing nothing
+
+```scala
+m.flatMap(pure) == m
+```
+
+* **Associativity**: flatMapping over two funcgtions f and g is the same as flatMapping over f and then flatMapping over g:
+
+```scala
+m.flatMap(f).flatMap(g) == m.flatMap(x => f(x).flatMap(g))
+```
+
+Every monad is also a functor, so:
+
+```scala
+import scala.language.higherKinds
+trait Monad[F[_]] {
+  def pure[A](value: A): F[A]
+  def flatMap[A, B](value: F[A])(func: A => F[B]): F[B]
+  def map[A, B](value: F[A])(func: A => B): F[B] = flatMap(value)(a => pure(func(a)))
+}
+```
