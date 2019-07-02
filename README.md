@@ -189,3 +189,31 @@ trait Monad[F[_]] {
 * Scala val = Cats Now (eager, memoized)
 * Scala def = Cats Always (lazy, not memoized)
 * Scala lazy val = Cats Later (lazy, memoized)
+
+# Semigroupal
+
+**Semigroupal** combines two context.
+
+```scala
+trait Semigroupal[F[_]] {
+  def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
+}
+```
+# Applicative
+```scala
+trait Apply[F[_]] extends Semigroupal[F] with Functor[F] {
+  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
+  def product[A, B](fa: F[A], fb: F[B]): F[(A, B)] = ap(map(fa)(a => (b: B) => (a, b)))(fb)
+}
+
+trait Applicative[F[_]] extends Apply[F] {
+  def pure[A](a: A): F[A]
+}
+```
+
+
+Semigroupal and Applicative functors are usually used for validation rules
+
+
+
+
